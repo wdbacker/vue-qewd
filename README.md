@@ -1,6 +1,6 @@
 # vue-qewd: [Vue.js](https://vuejs.org/) plugin for [QEWD](https://www.npmjs.com/package/qewd)
 
-This plugin integrates [Vue.js](https://vuejs.org/) applications with a multi-process [qewd (QEWD)](http://qewdjs.com/) [Express](https://expressjs.com/) or [Koa](http://koajs.com/) back-end server using [WebSockets](https://socket.io/) (or Ajax calls). Exposes the [ewd-client](https://www.npmjs.com/package/ewd-client) module as a `this.$qewd` built-in Vue service inside your Vue.js components. 
+This plugin integrates [Vue.js](https://vuejs.org/) applications with a multi-process [qewd (QEWD)](http://qewdjs.com/) [Express](https://expressjs.com/) or [Koa](http://koajs.com/) back-end server using [WebSockets](https://socket.io/) (or Ajax calls). Exposes the [ewd-client](https://www.npmjs.com/package/ewd-client) module as a `this.$qewd` built-in Vue service inside your Vue.js components.
 
 ## Installing
 
@@ -48,28 +48,28 @@ Next, create a default App.vue component:
 <template>
   <div id="app">
     <template v-if="qewdIsReady">
-	  <img src="./assets/logo.png">
-	  <h1>{{ msg }}</h1>
-	  <h2>Essential Links</h2>
-	  <ul>
-		<li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-		<li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-		<li><a href="https://gitter.im/vuejs/vue" target="_blank">Gitter Chat</a></li>
-		<li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-	  </ul>
-	  <h2>Ecosystem</h2>
-	  <ul>
-		<li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-		<li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-		<li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-		<li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
-	  </ul>
-	  <button @click="testing">QEWD message test</button>
-	</template>
-	<template v-else>	
-	  <img src="./assets/logo.png">
-	  <h2>Starting application, please wait ...</h2>
-	</template>
+      <img src="./assets/logo.png">
+      <h1>{{ msg }}</h1>
+      <h2>Essential Links</h2>
+    <ul>
+      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
+      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
+      <li><a href="https://gitter.im/vuejs/vue" target="_blank">Gitter Chat</a></li>
+      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
+    </ul>
+    <h2>Ecosystem</h2>
+    <ul>
+      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
+      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
+      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
+      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
+    </ul>
+    <button @click="testing">QEWD message test</button>
+  </template>
+  <template v-else>
+    <img src="./assets/logo.png">
+    <h2>Starting application, please wait ...</h2>
+  </template>
   </div>
 </template>
 
@@ -78,33 +78,33 @@ export default {
   name: 'app',
   created: function() {
     var self = this;
-	// monitor when QEWD is ready
-	this.$qewd.on('ewd-registered', function() {
-	  // QEWD is ready now, let's update the view ...
-	  self.qewdIsReady = true;
-	});
-	// start the QEWD WebSockets connection ...
-	this.$qewd.vstart();
+    // monitor when QEWD is ready
+    this.$qewd.on('ewd-registered', function() {
+      // QEWD is ready now, let's update the view ...
+      self.qewdIsReady = true;
+    });
+    // start the QEWD WebSockets connection ...
+    this.$qewd.vstart();
   },
   data () {
     return {
-	  qewdIsReady: false,
+      qewdIsReady: false,
       msg: 'Welcome to Your Vue.js App'
     }
   },
   methods: {
-	testing: function() {
-	  let messageObj = {
-		type: 'test',
-		params: {
-		  text: 'a Vue.js test message for QEWD'
-		}
-	  };
-	  let self = this;
-	  this.$qewd.send(messageObj, function(messageObj) {
-		self.msg = messageObj.message.text;
-	  });
-	}
+    testing: function() {
+      let messageObj = {
+        type: 'test',
+        params: {
+          text: 'a Vue.js test message for QEWD'
+        }
+      };
+      let self = this;
+      this.$qewd.send(messageObj, function(messageObj) {
+        self.msg = messageObj.message.text;
+      });
+    }
   }
 }
 </script>
