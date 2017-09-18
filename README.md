@@ -1,4 +1,4 @@
-# vue-qewd: [Vue.js](https://vuejs.org/) plugin for [QEWD](https://www.npmjs.com/package/qewd)
+# vue-qewd: [Vue.js](https://vuejs.org/) WebSocket client plugin for [QEWD](https://www.npmjs.com/package/qewd)
 
 This plugin integrates [Vue.js](https://vuejs.org/) applications with a multi-process [qewd (QEWD)](http://qewdjs.com/) [Express](https://expressjs.com/) or [Koa](http://koajs.com/) back-end server using [WebSockets](https://socket.io/) (or Ajax calls). Exposes the [ewd-client](https://www.npmjs.com/package/ewd-client) module as a `this.$qewd` built-in Vue service inside your Vue.js components.
 
