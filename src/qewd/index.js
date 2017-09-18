@@ -31,7 +31,7 @@ export function QEWD(params) {
   let io;
   if (!params.no_sockets) io = require('socket.io-client');
   let $;
-  if (!params.ajax) $ = require('jquery');
+  if (params.use_jquery && !params.ajax) $ = require('jquery');
 
   // set up start parameters for ewd-client
   let QEWD = ewdClient.EWD;
