@@ -48,6 +48,21 @@ export function QEWD(params) {
   QEWD.vstart = function() {
     QEWD.start(application);
   };
+
+  let registrationCallback = null;
+  QEWD.vRegistrationCallback = function(callback) {
+    registrationCallback = callback;
+  };
+  QEWD.on('ewd-registered', function() {
+    if (registrationCallback) { registrationCallback(true); }
+  });
+  QEWD.on('ewd-reregistered', function() {
+    if (registrationCallback) { registrationCallback(true); }
+  });
+  QEWD.on('socketDisconnected', function() {
+    if (registrationCallback) { registrationCallback(false); }
+  });
+
   // return the QEWD client instance
   return QEWD;
 }

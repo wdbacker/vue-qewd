@@ -16,7 +16,7 @@ Next, create a new startup app template with [vue-cli](https://www.npmjs.com/pac
 
 This module adds a `$qewd` service to the Vue instance. You can then simply communicate with your back-end by invoking `this.$qewd.send()` in your Vue component methods. Btw, you'll need to define a `let self = this` to make the Vue component instance available in the `send` callback because it's not proxied yet inside the callback.
 
-While QEWD is starting the WebSocket connection with the back-end, you can also use conditional rendering to hide (parts) of the app view. See also below, where the created hook in the main app component is listening for the `ewd-registered` event on the `this.$qewd` service. This sets the reactive `qewdIsReady` data property and re-renders the view.
+While QEWD is starting the WebSocket connection with the back-end, you can also use conditional rendering to hide (parts of) the app view. See also below, where the App component registers a callback function which QEWD calls when the WebSocket connection state changes. This sets the reactive `qewdReady` data property and re-renders the view.
 
 Press the "QEWD message test" button to see the plugin back-end communication in action.
 
@@ -42,12 +42,13 @@ new Vue({
   render: h => h(App)
 })
 ```
+
 Next, create a default App.vue component:
 
 ```javascript
 <template>
   <div id="app">
-    <template v-if="qewdIsReady">
+    <template v-if="qewdReady">
       <img src="./assets/logo.png">
       <h1>{{ msg }}</h1>
       <h2>Essential Links</h2>
@@ -79,16 +80,15 @@ export default {
   created: function() {
     var self = this;
     // monitor when QEWD is ready
-    this.$qewd.on('ewd-registered', function() {
-      // QEWD is ready now, let's update the view ...
-      self.qewdIsReady = true;
+    this.$qewd.vRegistrationCallback(function(registered) {
+      self.qewdReady = registered; //
     });
     // start the QEWD WebSockets connection ...
     this.$qewd.vstart();
   },
   data () {
     return {
-      qewdIsReady: false,
+      qewdReady: false,
       msg: 'Welcome to Your Vue.js App'
     }
   },
@@ -152,9 +152,9 @@ module.exports = {
   }
 };
 ```
-Next, you'll need to install a one standard dependency the QEWD client needs:
+Next, you'll need to install one standard dependency the QEWD client needs:
 ```batchfile
-npm i socket.io-client
+npm i socket.io-client --save
 ```
 Finally, run your Vue.js test app with:
 ```batchfile
