@@ -45,7 +45,7 @@ export default {
   output: {
     path: path.join(__dirname, 'dist'),
     filename,
-    library: 'ReactEWD',
+    library: 'VueQEWD',
     libraryTarget: 'umd',
   },
 
