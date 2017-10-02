@@ -2,6 +2,17 @@
 
 This plugin integrates [Vue.js](https://vuejs.org/) applications with a multi-process [qewd (QEWD)](http://qewdjs.com/) [Express](https://expressjs.com/) or [Koa](http://koajs.com/) back-end server using [WebSockets](https://socket.io/) (or Ajax calls). Exposes the [ewd-client](https://www.npmjs.com/package/ewd-client) module as a `this.$qewd` built-in Vue service inside your Vue.js components.
 
+[QEWD](http://qewdjs.com/) is a unique web framework allowing you to concentrate on your application code, without worrying about system infrastructure, featuring:
+- a WebSockets server, allowing your application to connect via this `vue-qewd` module using [ewd-client](https://www.npmjs.com/package/ewd-client)
+- a (federating) REST server, to build your REST endpoints & allowing you to federate requests to other (chained) QEWD servers, featuring [Express](https://expressjs.com/) or [Koa](http://koajs.com/) as underlying frameworks
+- a microservices server, using very efficient (permanent, secured) WebSocket connections to other QEWD servers using [JWT](https://jwt.io/)'s
+- a [GraphQL](http://graphql.org/) server to write & process your GraphQL queries & mutations
+- an application router to orchestrate all your different application endpoint(s)/handler(s)
+- a master/worker multi-process queue architecture, high-performance and very scalable
+- session management/cache allowing you to write stateful applications
+- response customization: combine responses from different servers, return responses in different formats, intercept an re-route requests, ...
+- database independence: use the [InterSystems Caché unified multi-model database](https://www.intersystems.com/products/cache/), [Redis](https://redis.io/), [GT/M](https://sourceforge.net/projects/fis-gtm/), ... or whatever (No)SQL database technology you like!
+
 ## Installing
 
     npm install vue-qewd
@@ -16,7 +27,7 @@ Next, create a new startup app template with [vue-cli](https://www.npmjs.com/pac
 
 This module adds a `$qewd` service to the Vue instance. You can then simply communicate with your back-end by invoking `this.$qewd.send()` in your Vue component methods. Btw, you'll need to define a `let self = this` to make the Vue component instance available in the `send` callback because it's not proxied yet inside the callback.
 
-While QEWD is starting the WebSocket connection with the back-end, you can also use conditional rendering to hide (parts of) the app view. See also below, where the App component registers a callback function which QEWD calls when the WebSocket connection state changes. This sets the reactive `qewdReady` data property and re-renders the view.
+While QEWD is starting the WebSocket connection with the back-end, you can also use conditional rendering to hide (parts of) the app view using `this.$qewd.vRegistrationCallback(cb)`. See below, where the App component installs a callback function which QEWD calls when the WebSocket connection state changes. This sets the reactive `qewdReady` data property and re-renders the view.
 
 Press the "QEWD message test" button to see the plugin back-end communication in action.
 
