@@ -2,7 +2,7 @@
 
 This plugin integrates [Vue.js](https://vuejs.org/) applications with a multi-process [qewd (QEWD)](http://qewdjs.com/) [Express](https://expressjs.com/) or [Koa](http://koajs.com/) back-end server using [WebSockets](https://socket.io/) (or Ajax calls). Exposes the [ewd-client](https://www.npmjs.com/package/ewd-client) module as a `this.$qewd` built-in Vue service inside your Vue.js components.
 
-A similar module [react-qewd](https://www.npmjs.com/package/vue-qewd) for [React](https://reactjs.org/)/[Redux](http://redux.js.org/) exists.
+A similar module [react-qewd](https://www.npmjs.com/package/react-qewd) for [React](https://reactjs.org/)/[Redux](http://redux.js.org/) exists.
 
 [QEWD](http://qewdjs.com/) is a unique web framework allowing you to concentrate on your application code, without worrying about system infrastructure, featuring:
 - a WebSockets server, allowing your application to connect via this `vue-qewd` module using [ewd-client](https://www.npmjs.com/package/ewd-client)
