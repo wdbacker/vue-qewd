@@ -1,6 +1,6 @@
 {
   "name": "vue-qewd",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Vue.js WebSocket client plugin for QEWD",
   "main": "lib/index.js",
   "jsnext:main": "es/index.js",

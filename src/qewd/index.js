@@ -1,9 +1,9 @@
 /*
 
  ----------------------------------------------------------------------------
- | vue-ewd: Vue.js client module for ewd-xpress                      |
+ | vue-qewd: Vue.js client module for QEWD.js                               |
  |                                                                          |
- | Copyright (c) 2017 Stabe nv,                                             |
+ | Copyright (c) 2018 Stabe nv,                                             |
  | Hofstade, Oost-Vlaanderen,                                               |
  | All rights reserved.                                                     |
  |                                                                          |
@@ -20,9 +20,12 @@
  |  limitations under the License.                                          |
  ----------------------------------------------------------------------------
 
-  16 September 2017
+  8 December 2018
 
 */
+
+/* eslint-disable comma-dangle */
+/* eslint-disable func-names */
 
 import ewdClient from 'ewd-client';
 
@@ -34,8 +37,8 @@ export function QEWD(params) {
   if (params.use_jquery && !params.ajax) $ = require('jquery');
 
   // set up start parameters for ewd-client
-  let QEWD = ewdClient.EWD;
-  let application = {
+  const EWD = ewdClient.EWD;
+  const application = {
     application: params.application || 'unknown',
     io: io,
     $: $,
@@ -43,26 +46,29 @@ export function QEWD(params) {
     url: params.url || null,
     mode: params.mode || 'development',
     log: params.log || true,
+    cookieName: params.cookieName || 'ewdSession',
+    jwt: params.jwt || false,
+    jwt_decode: params.jwt_decode || false
   };
 
-  QEWD.vstart = function() {
-    QEWD.start(application);
+  EWD.vstart = EWD.vueStart = function() {
+    EWD.start(application);
   };
 
   let registrationCallback = null;
-  QEWD.vRegistrationCallback = function(callback) {
+  EWD.vRegistrationCallback = function(callback) {
     registrationCallback = callback;
   };
-  QEWD.on('ewd-registered', function() {
-    if (registrationCallback) { registrationCallback(true); }
+  EWD.on('ewd-registered', function() {
+    if (registrationCallback) { registrationCallback(true, 'ewd-registered'); }
   });
-  QEWD.on('ewd-reregistered', function() {
-    if (registrationCallback) { registrationCallback(true); }
+  EWD.on('ewd-reregistered', function() {
+    if (registrationCallback) { registrationCallback(true, 'ewd-reregistered'); }
   });
-  QEWD.on('socketDisconnected', function() {
-    if (registrationCallback) { registrationCallback(false); }
+  EWD.on('socketDisconnected', function() {
+    if (registrationCallback) { registrationCallback(false, 'socketDisconnected'); }
   });
 
   // return the QEWD client instance
-  return QEWD;
+  return EWD;
 }
