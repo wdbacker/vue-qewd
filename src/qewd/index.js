@@ -3,7 +3,7 @@
  ----------------------------------------------------------------------------
  | vue-qewd: Vue.js client module for QEWD.js                               |
  |                                                                          |
- | Copyright (c) 2018 Stabe nv,                                             |
+ | Copyright (c) 2019 Stabe nv,                                             |
  | Hofstade, Oost-Vlaanderen,                                               |
  | All rights reserved.                                                     |
  |                                                                          |
@@ -20,7 +20,7 @@
  |  limitations under the License.                                          |
  ----------------------------------------------------------------------------
 
-  8 December 2018
+  11 January 2019
 
 */
 
@@ -31,17 +31,12 @@ import ewdClient from 'ewd-client';
 
 // instantiation function to use ewd-client
 export function QEWD(params) {
-  let io;
-  if (!params.no_sockets) io = require('socket.io-client');
-  let $;
-  if (params.use_jquery && !params.ajax) $ = require('jquery');
-
   // set up start parameters for ewd-client
   const EWD = ewdClient.EWD;
   const application = {
     application: params.application || 'unknown',
-    io: io,
-    $: $,
+    io: params.io,
+    $: params.$,
     ajax: params.ajax || null,
     url: params.url || null,
     mode: params.mode || 'development',
@@ -56,7 +51,7 @@ export function QEWD(params) {
   };
 
   let registrationCallback = null;
-  EWD.vRegistrationCallback = function(callback) {
+  EWD.vueRegistrationCallback = EWD.vRegistrationCallback = function(callback) {
     registrationCallback = callback;
   };
   EWD.on('ewd-registered', function() {
@@ -69,6 +64,6 @@ export function QEWD(params) {
     if (registrationCallback) { registrationCallback(false, 'socketDisconnected'); }
   });
 
-  // return the QEWD client instance
+  // return the EWD client instance
   return EWD;
 }

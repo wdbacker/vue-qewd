@@ -1,7 +1,7 @@
 {
   "name": "vue-qewd",
-  "version": "1.0.8",
-  "description": "Vue.js WebSocket client plugin for QEWD",
+  "version": "2.0.0",
+  "description": "Vue.js & Nuxt.js WebSocket client plugin for QEWD.js",
   "main": "lib/index.js",
   "jsnext:main": "es/index.js",
   "files": [
@@ -28,8 +28,23 @@
   },
   "keywords": [
     "qewd",
+    "qewd.js",
+    "qewdjs",
     "vue",
-    "vuex"
+    "vue.js",
+    "vuejs",
+    "vuex",
+    "nuxt",
+    "nuxt.js",
+    "nuxtjs",
+    "ssr",
+    "realtime",
+    "socket",
+    "io",
+    "websocket",
+    "axios",
+    "xhr",
+    "ajax"
   ],
   "author": "Ward De Backer <ward.debacker@gmail.com>",
   "license": "Apache-2.0",

@@ -3,7 +3,7 @@
  ----------------------------------------------------------------------------
  | vue-qewd: Vue.js client module for QEWD.js                               |
  |                                                                          |
- | Copyright (c) 2018 Stabe nv,                                             |
+ | Copyright (c) 2019 Stabe nv,                                             |
  | Hofstade, Oost-Vlaanderen,                                               |
  | All rights reserved.                                                     |
  |                                                                          |
@@ -20,7 +20,7 @@
  |  limitations under the License.                                          |
  ----------------------------------------------------------------------------
 
-  8 December 2018
+  11 January 2019
 
 */
 

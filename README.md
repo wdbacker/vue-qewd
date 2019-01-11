@@ -1,13 +1,13 @@
-# vue-qewd: [Vue.js](https://vuejs.org/) WebSocket client plugin for [QEWD.js](https://www.npmjs.com/package/qewd)
+# vue-qewd: [Vue.js](https://vuejs.org/) & [Nuxt.js](https://nuxtjs.org/) WebSocket client plugin for [QEWD.js](https://www.npmjs.com/package/qewd)
 
-This plugin integrates [Vue.js](https://vuejs.org/) applications with a multi-process [qewd (QEWD.js)](http://qewdjs.com/) [Express](https://expressjs.com/) or [Koa](http://koajs.com/) back-end server using [WebSockets](https://socket.io/) (or Ajax calls). Exposes the [ewd-client](https://www.npmjs.com/package/ewd-client) module as a `this.$qewd` built-in Vue.js service inside your Vue.js components.
+This plugin integrates [Vue.js](https://vuejs.org/) & [Nuxt.js](https://nuxtjs.org/) applications with a multi-process [qewd (QEWD.js)](http://qewdjs.com/) [Express](https://expressjs.com/) or [Koa](http://koajs.com/) back-end server using [WebSockets](https://socket.io/) (or Ajax calls). Exposes the [ewd-client](https://www.npmjs.com/package/ewd-client) module as a `this.$qewd` built-in Vue.js service inside your Vue.js components.
 
-A similar module [react-qewd](https://www.npmjs.com/package/react-qewd) exists for [React](https://reactjs.org/)/[Redux](http://redux.js.org/).
+A similar [react-qewd](https://www.npmjs.com/package/react-qewd) module exists for [React](https://reactjs.org/)/[Redux](http://redux.js.org/).
 
 [QEWD.js](http://qewdjs.com/) is a unique web framework allowing you to concentrate on your application code, without worrying about system infrastructure, featuring:
 - a WebSockets server, allowing your application to connect via this `vue-qewd` module using [ewd-client](https://www.npmjs.com/package/ewd-client)
 - a (federating) REST server, to build your REST endpoints & allowing you to federate requests to other (chained) QEWD servers, featuring [Express](https://expressjs.com/) or [Koa](http://koajs.com/) as underlying frameworks
-- a microservices server, using very efficient (permanent, secured) WebSocket connections to other QEWD servers using [JWT](https://jwt.io/)'s
+- a microservices server, using very efficient (permanent, secured) WebSocket connections to other QEWD.js servers using [JWT](https://jwt.io/)'s
 - a [GraphQL](http://graphql.org/) server to write & process your GraphQL queries & mutations
 - an application router to orchestrate all your different application endpoint(s)/handler(s)
 - a master/worker multi-process queue architecture, high-performance and very scalable
@@ -19,33 +19,106 @@ A similar module [react-qewd](https://www.npmjs.com/package/react-qewd) exists f
 
     npm install vue-qewd
 
+### Version 2: breaking changes!
+
+From version 2.0.0 onwards, the [socket.io-client](https://www.npmjs.com/package/jquery) and [jQuery](https://www.npmjs.com/package/jquery) module dependencies for the underlying [ewd-client](https://www.npmjs.com/package/ewd-client) need to be passed in as parameters when instantiating QEWD:
+
+```javascript
+import io from 'socket.io-client'
+import $ from 'jquery'
+
+let qewd = QEWD({
+  application: 'qewd-test-app', // application name
+  log: true,
+  url: 'http://localhost:8080',
+  io,
+  $
+})
+```
+Overview of parameter changes in 2.0.0 and up:
+- ```io``` was added: required for WebSocket communication mode, import it as above or as 
+```javascript
+var io = require('socket.io-client')
+```
+- ```$``` was added: required for Ajax communication mode using the [jQuery](https://www.npmjs.com/package/jquery) ajax method, import it as above or as
+```javascript
+var $ = require('jquery')
+```
+- ```ajax``` remains the same: required for Ajax communication mode, using you own custom Ajax module, e.g. with axios
+```javascript
+import io from 'socket.io-client'
+import $ from 'jquery'
+import axios from 'axios'
+
+var qewd = QEWD({
+  application: 'qewd-test-app', // application name
+  log: true,
+  url: 'http://localhost:8080',
+  io,
+  ajax: function (params, success, fail) {
+    let data = JSON.stringify(params.data)
+    axios({
+      url: params.url,
+      method: 'post',
+      headers: {
+        'Content-Type': params.contentType
+      },
+      data,
+      timeout: params.timeout
+    })
+      .then(function (response) {
+        success(response.data)
+      })
+      .catch(function (error) {
+        if (error.response) {
+          success(error.response.data)
+        } else {
+          fail(error.message || 'unknown ajax error')
+        }
+      })
+  }
+})
+```
+- for mixed WebSocket & Ajax communication mode, you need both parameters (io and $ || ajax)
+- ```no_sockets``` parameter was removed
+- ```use_jquery``` parameter was removed
+
+This allows you to control which modules you need and avoids [Webpack](https://webpack.js.org/) dependency detection issues.
+
 ## Options
 
   Options you can pass to the `QEWD({ ... })` instance (see examples) with  their default values and a short description:
 
     {
-      application: 'unknown', // application module name
-      no_sockets: false, // turn off WebSockets support (optional, don't require by default, see below)
-      io: require('socket.io-client'), // re-use existing require (optional, require is done by default)
-      $: require('jquery'), // re-use existing require('jquery') (optional, require is done by default)
-      ajax: null, // specify your own ajax request mode function, see example below (optional)
-      url: null, // url of QEWD server, in the form 'http(s)://<host>:<port>'
-      mode: 'development', // runtime mode for ewd-client (optional)
-      log: true, // log each QEWD message sent & received on console (optional)
-      cookieName: 'ewdSession', // specify custom cookie name to keep (WebSockets) session after a page refresh (optional)
-      jwt: false, // use JWT's for sessions (optional)
-      jwt_decode: false // decode JWT's in the client (optional)
+      // application module name
+      application: 'unknown',
+      // socket.io-client module (optional, required for WebSockets communication)
+      io: undefined,
+      // jquery module (optional, required for Ajax communication using jQuery's $.ajax)
+      $: undefined,
+      // specify your own Ajax request handler function, see example above (optional)
+      ajax: null,
+      // url of QEWD.js server, in the form 'http(s)://<host>:<port>'
+      url: null,
+      // runtime mode for ewd-client (optional)
+      mode: 'development',
+      // log each QEWD message sent & received on console (optional)
+      log: true,
+      // specify custom cookie name to restart the current WebSockets session between page refreshes (optional)
+      cookieName: 'ewdSession',
+      // use JWT's for sessions (optional)
+      jwt: false,
+      // decode JWT's in the client (optional)
+      jwt_decode: false
     }
 
 You'll find further details about these options in the [QEWD.js training course](http://docs.qewdjs.com/qewd_training.html).
 
-## Use with Vue.js
+## Use with [Vue.js](https://vuejs.org/)
 
-Below is an example using [Vue.js](https://vuejs.org/) components.
+Below is a small example using [Vue.js](https://vuejs.org/) components.
 
-First, create a very small `qewd-test` module in your QEWD back-end server with a `test` handler returning a simple test message.
-
-Next, create a new startup app template with [vue-cli](https://www.npmjs.com/package/vue-cli) (or with the most recent [@vue/cli](https://www.npmjs.com/package/@vue/cli) version 3.x). This example is just a modification of the standard app template code. If necessary, adjust the `url` property inside the `var qewd` to your local settings.
+First, create a new startup app template with [vue-cli](https://www.npmjs.com/package/vue-cli) (or with the most recent [@vue/cli](https://www.npmjs.com/package/@vue/cli) version 3.x). This example is just a modification of the standard app template code. If necessary, adjust the `url` property inside the `var qewd` to your local settings.
 
 This module adds a `$qewd` service to the Vue instance. You can then simply communicate with your back-end by invoking `this.$qewd.send()` in your Vue component methods. Btw, you'll need to define a `let self = this` to make the Vue component instance available in the `send` callback because it's not proxied yet inside the callback.
 
@@ -56,9 +129,10 @@ Press the "QEWD message test" button to see the plugin back-end communication in
 ```javascript
 import Vue from 'vue'
 import App from './App.vue'
+import io from 'socket.io-client'
 // import both the QEWD class and VueQEWD plugin
 import { QEWD, VueQEWD } from 'vue-qewd'
-// import axios (optional, in case you use ajax mode)
+// import axios (optional, in case you need to use ajax mode)
 import axios from 'axios'
 
 // instantiate QEWD with your parameters
@@ -66,10 +140,34 @@ var qewd = QEWD({
   application: 'qewd-test', // application name
   log: true,
   url: 'http://localhost:8080', // adjust this to your local environment
+  io, // use WebSocket communication
+  // uncomment the lines below to use axios ajax calls instead of using WebSockets (and remove io parameter)
+  // see also part 14 of QEWD training course from page 15 at
+  // https://www.slideshare.net/robtweed/ewd-3-training-course-part-14-using-ajax-for-ewdxpress-messages
+  /*
   ajax: function (params, success, fail) {
-    // for an example, see part 14 of QEWD training course from page 15 at
-    // https://www.slideshare.net/robtweed/ewd-3-training-course-part-14-using-ajax-for-ewdxpress-messages
+    let data = JSON.stringify(params.data)
+    axios({
+      url: params.url,
+      method: 'post',
+      headers: {
+        'Content-Type': params.contentType
+      },
+      data,
+      timeout: params.timeout
+    })
+      .then(function (response) {
+        success(response.data)
+      })
+      .catch(function (error) {
+        if (error.response) {
+          success(error.response.data)
+        } else {
+          fail(error.message || 'unknown ajax error')
+        }
+      })
   }
+  */
 });
 
 // let Vue know you want to use the plugin
@@ -178,7 +276,7 @@ a {
 </style>
 ```
 
-The `qewd-test` module used in the QEWD.js back-end contains:
+Next, create a `qewd-test.js` module in your QEWD back-end server with a `test` handler returning a simple test message (see below).
 
 ```javascript
 module.exports = {
@@ -191,7 +289,7 @@ module.exports = {
   }
 };
 ```
-Next, you'll need to install one dependency the QEWD client needs to build it's WebSockets connection to the `QEWD.js server`:
+Next, you'll need to install one dependency the QEWD client needs to build it's WebSockets connection to the QEWD.js server back-end:
 ```batchfile
 npm i socket.io-client --save
 ```
@@ -199,19 +297,20 @@ Finally, run your Vue.js test app with:
 ```batchfile
 npm run dev
 ```
-`Tip`: to avoid Webpack errors (requiring both `socket.io-client` and `jquery` to be installed), include them both as (at least development) dependency in your Vue.js project, e.g.:
+`Tip`: to avoid Webpack errors (requiring both `socket.io-client` and `jquery` to be installed), include the module(s) you need as (at least development) dependency in your Vue.js project, e.g.:
 
     npm i socket.io-client
     npm i -D jquery
 
 ## Use with [Nuxt.js](https://nuxtjs.org/)
 
-If you want to build Vue.js apps using SSR (server-side rendering), you can also use `vue-qewd` inside a `Nuxt.js` project (template). You need to define `vue-qewd` first as a plugin for your `Nuxt.js` project.
+If you want to build Vue.js apps using SSR (server-side rendering), you can use `vue-qewd` inside a `Nuxt.js` project (template). You need to define `vue-qewd` first as a plugin for your `Nuxt.js` project.
 
 Create a `vue-qewd.js` file inside your `/plugins` directory:
 
 ```javascript
 import Vue from 'vue'
+import io from 'socket.io-client'
 // import both the QEWD class and VueQEWD plugin
 import { QEWD, VueQEWD } from 'vue-qewd'
 
@@ -222,6 +321,7 @@ var qewd = QEWD({
   // adjust this to your local environment
   // using environment vars defined in nuxt.config.js
   url: 'http://' + process.env.qewdHost + ':' + process.env.qewdPort,
+  io,
   // use a custom cookie in the browser
   cookieName: 'qwt'
 });
@@ -300,7 +400,7 @@ Next, you can use `this.$qewd` in all your page methods as usual.
 
 ## License
 
- Copyright (c) 2018 Stabe nv,  
+ Copyright (c) 2019 Stabe nv,  
  Hofstade, Oost-Vlaanderen, BE  
  All rights reserved
 
