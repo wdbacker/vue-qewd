@@ -32,7 +32,7 @@ import ewdClient from 'ewd-client';
 // instantiation function to use ewd-client
 export function QEWD(params) {
   // set up start parameters for ewd-client
-  const EWD = ewdClient.EWD;
+  const EWD = ewdClient.EWD || ewdClient;
   const application = {
     application: params.application || 'unknown',
     io: params.io,

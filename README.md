@@ -47,7 +47,7 @@ var $ = require('jquery')
 - ```ajax``` remains the same: required for Ajax communication mode, using you own custom Ajax module, e.g. with axios
 ```javascript
 import io from 'socket.io-client'
-import $ from 'jquery'
+// import $ from 'jquery'
 import axios from 'axios'
 
 var qewd = QEWD({
